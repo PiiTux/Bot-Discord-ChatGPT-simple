@@ -26,16 +26,16 @@ client.on("messageCreate", async message => {
     const messages = await message.channel.messages.fetch({ limit: 9 });
     messages.reverse();
 
-    for (const msg of messages) {
-        if (msg.system) continue;
-        if (!msg.content) continue;
-        if (msg.author.bot && msg.author.id !== client.user.id) continue;
+    messages.forEach(msg => {
+        if (msg.system) return;
+        if (!msg.content) return;
+        if (msg.author.bot && msg.author.id !== client.user.id) return;
 
         chatCompletion.messages.push({
             role: msg.author.bot ? "assistant" : "user",
             content: msg.content
         });
-    }
+    });
 
     message.reply((await openai.chat.completions.create(chatCompletion)).choices[0].message.content);
 });
